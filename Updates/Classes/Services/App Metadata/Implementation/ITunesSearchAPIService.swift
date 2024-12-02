@@ -36,12 +36,14 @@ struct ITunesSearchAPIService: AppMetadataService {
 
     func fetchAppMetadata(_ completion: @escaping (AppMetadataResult) -> Void) {
         DispatchQueue.global(qos: .background).async {
-            guard let apiData = try? Data(contentsOf: self.iTunesSearchAPIURL, options: .uncached) else {
-                onMainQueue(completion)(.failure(.emptyPayload))
-                return
+            let urlRequest = URLRequest(url: self.iTunesSearchAPIURL, cachePolicy: .reloadIgnoringLocalCacheData)
+            URLSession.shared.dataTask(with: urlRequest) { data, _, error in
+                guard let data else {
+                    onMainQueue(completion)(.failure(.emptyPayload))
+                }
+                let parsingResult = self.parsingService.parse(apiData)
+                onMainQueue(completion)(parsingResult)
             }
-            let parsingResult = self.parsingService.parse(apiData)
-            onMainQueue(completion)(parsingResult)
         }
     }
 }
