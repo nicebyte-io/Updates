@@ -36,7 +36,7 @@ struct ITunesSearchAPIService: AppMetadataService {
 
     func fetchAppMetadata(_ completion: @escaping (AppMetadataResult) -> Void) {
         DispatchQueue.global(qos: .background).async {
-            guard let apiData = try? Data(contentsOf: self.iTunesSearchAPIURL) else {
+            guard let apiData = try? Data(contentsOf: self.iTunesSearchAPIURL, options: .uncached) else {
                 onMainQueue(completion)(.failure(.emptyPayload))
                 return
             }
