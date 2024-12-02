@@ -38,11 +38,12 @@ struct ITunesSearchAPIService: AppMetadataService {
         DispatchQueue.global(qos: .background).async {
             let urlRequest = URLRequest(url: self.iTunesSearchAPIURL, cachePolicy: .reloadIgnoringLocalCacheData)
             URLSession.shared.dataTask(with: urlRequest) { data, _, error in
-                guard let data else {
+                if let data  {
+                    let parsingResult = self.parsingService.parse(data)
+                    onMainQueue(completion)(parsingResult)
+                } else {
                     onMainQueue(completion)(.failure(.emptyPayload))
                 }
-                let parsingResult = self.parsingService.parse(data)
-                onMainQueue(completion)(parsingResult)
             }
         }
     }
