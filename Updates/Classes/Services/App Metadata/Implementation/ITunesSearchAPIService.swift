@@ -41,7 +41,7 @@ struct ITunesSearchAPIService: AppMetadataService {
                 guard let data else {
                     onMainQueue(completion)(.failure(.emptyPayload))
                 }
-                let parsingResult = self.parsingService.parse(apiData)
+                let parsingResult = self.parsingService.parse(data)
                 onMainQueue(completion)(parsingResult)
             }
         }
